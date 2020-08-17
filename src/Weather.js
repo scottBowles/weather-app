@@ -3,7 +3,7 @@ import CityInput from './CityInput'
 
 function  Weather() {
     const [ city, setCity ] = useState("Pittsburgh")
-    const [ weatherData, setWeatherData ] = useState({ name: "", country: "", main: "", description: "", iconUrl: "", temp: "", feels_like: "", humidity: ""})
+    const [ weatherData, setWeatherData ] = useState({ name: "", country: "", description: "", iconUrl: "", temp: "", feels_like: "", humidity: ""})
 
     useEffect(() => {
         async function fetchData() {
@@ -32,7 +32,7 @@ function  Weather() {
 
             const { name, 
                 sys: { country }, 
-                weather: [{ main, description, icon }], 
+                weather: [{ description, icon }], 
                 main: { temp, feels_like, humidity } 
             } = data
 
@@ -45,7 +45,6 @@ function  Weather() {
             return { 
                 name, 
                 country, 
-                main, 
                 description: descriptionFormatted, 
                 iconUrl,
                 temp, 
@@ -68,7 +67,7 @@ function  Weather() {
     }
     
     if (weatherData) {
-        const { name, country, main, description, iconUrl,temp, feels_like, humidity } = weatherData
+        const { name, country, description, iconUrl,temp, feels_like, humidity } = weatherData
 
         return (        
             <div>
