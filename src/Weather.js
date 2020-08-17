@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import CityInput from './CityInput'
-import Switch from 'react-switch'
+import UnitSwitch from './UnitSwitch'
+import WeatherDisplay from './WeatherDisplay'
 
 function  Weather() {
     const [ city, setCity ] = useState("Pittsburgh")
@@ -63,95 +64,30 @@ function  Weather() {
         }
 
         if (city) fetchWeatherData()
-    }, [ city ])
+    }, [ city, unit ])
 
     function handleCityInput(cityInput) {
         setCity(cityInput)
     }
 
-    function handleUnitChange(switchValue) {
-
-        function fahrenheitToCelsius(f) {
-            return (f - 32) / 1.8
-        }
-
-        function celsiusToFahrenheit(c) {
-            return c * 1.8 + 32
-        }
-
-        function nearestHundredth(num) {
-            return Math.floor(num * 100) / 100
-        }
-        
+    function handleUnitChange(switchValue) {        
         const newUnits = switchValue ? "celsius" : "fahrenheit"
-        const newTemp = newUnits === "celsius" ? fahrenheitToCelsius(weatherData.temp) : celsiusToFahrenheit(weatherData.temp)
-        const newTempRounded = nearestHundredth(newTemp)
-        const newFeelsLike = newUnits === "celsius" ? fahrenheitToCelsius(weatherData.feels_like) : celsiusToFahrenheit(weatherData.feels_like)
-        const newFeelsLikeRounded = nearestHundredth(newFeelsLike)
-        
-        setWeatherData({
-            ...weatherData,
-            temp: newTempRounded,
-            feels_like: newFeelsLikeRounded
-        })
-
         setUnit(newUnits)
     }
     
     if (weatherData) {
-        const { name, country, description, iconUrl, temp, feels_like, humidity } = weatherData
-
         return (        
             <div>
                 <CityInput handleCityInput={ handleCityInput } />
-                <Switch 
-                    onChange={ handleUnitChange } 
-                    checked={ unit === "celsius" } 
-                    offColor="#08f"
-                    onColor="#08f"
-                    uncheckedIcon={
-                        <div
-                            style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            height: "100%",
-                            fontSize: 15,
-                            color: "#fff",
-                            paddingRight: 2
-                            }}
-                        >
-                            &#8457;
-                        </div>
-                    }
-                    checkedIcon={
-                        <div
-                            style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            height: "100%",
-                            fontSize: 15,
-                            color: "#fff",
-                            paddingRight: 2
-                            }}
-                        >
-                            &#8451;
-                        </div>
-                    } 
-                />
-                <h3>{ name }, { country }</h3>
-                <div>{ description }</div>
-                <img src={ iconUrl } alt={ description } />
-                <div> Current Temperature: { temp }</div>
-                <div>Feels Like { feels_like }</div>
-                <div style={{ margin: "15px" }}>Humidity: {humidity}%</div>
+                <UnitSwitch handleUnitChange={ handleUnitChange } unit={ unit } />
+                <WeatherDisplay weatherData={ weatherData } />
             </div>
         )
     } else {
         return (
             <div>
                 <CityInput handleCityInput={ handleCityInput } />
+                <UnitSwitch handleUnitChange={ handleUnitChange } unit={ unit } />
                 <div>City not found</div>
             </div>
         )
