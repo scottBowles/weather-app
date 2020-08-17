@@ -15,7 +15,7 @@ function CityInput(props) {
 
     return (
         <form onSubmit={ handleSubmit }>
-            <input type="text" placeholder="City" value={ city } onChange={ handleChange }></input>
+            <input type="text" placeholder="New York, NY, US" value={ city } onChange={ handleChange }></input>
             <button>Search</button>
         </form>
     )

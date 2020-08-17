@@ -36,13 +36,17 @@ function  Weather() {
                 main: { temp, feels_like, humidity } 
             } = data
 
+            const capitalizeFirstLetters = (input) => input.replace(/\b\w/g, letter => letter.toUpperCase())
+
+            const descriptionFormatted = capitalizeFirstLetters(description)
+            
             const iconUrl = constructIconUrl(icon)
 
             return { 
                 name, 
                 country, 
                 main, 
-                description, 
+                description: descriptionFormatted, 
                 iconUrl,
                 temp, 
                 feels_like, 
@@ -70,11 +74,11 @@ function  Weather() {
             <div>
                 <CityInput handleCityInput={ handleCityInput } />
                 <h3>{ name }, { country }</h3>
-                <div>{ main }</div>
+                <div>{ description }</div>
                 <img src={ iconUrl } alt={ description } />
                 <div> Current Temperature: { temp }</div>
                 <div>Feels Like { feels_like }</div>
-                <div>Humidity: {humidity}</div>
+                <div>Humidity: {humidity}%</div>
             </div>
         )
     } else {
