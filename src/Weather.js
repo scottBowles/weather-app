@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react'
 import CityInput from './CityInput'
 
 function  Weather() {
-    const [ city, setCity ] = useState("")
+    const [ city, setCity ] = useState("Pittsburgh")
     const [ weatherData, setWeatherData ] = useState({ name: "", country: "", main: "", description: "", iconUrl: "", temp: "", feels_like: "", humidity: ""})
 
     useEffect(() => {
         async function fetchData() {
-            const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&APPID=eef25c6c675856bee810c6ca5958c8ee`)
-            const data = await res.json()
-            return data
+            try {
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&APPID=eef25c6c675856bee810c6ca5958c8ee`)
+                const data = await res.json()
+                return data
+            } catch {
+                throw new Error("Error fetching data")
+            }
         }
         
         function constructIconUrl(iconToken) {
@@ -18,6 +22,10 @@ function  Weather() {
         }
 
         function parseData(data) {
+            if (data.cod === "404") {
+                return null
+            }
+
             const { name, 
                 sys: { country }, 
                 weather: [{ main, description, icon }], 
@@ -51,14 +59,23 @@ function  Weather() {
         setCity(cityInput)
     }
     
-    return (
-        <div>
-            <CityInput handleCityInput={ handleCityInput } />
-            <div>{ weatherData.main }</div>
-            <div> Current Temperature: { weatherData.temp }</div>
-            <img src={ weatherData.iconUrl } alt={ weatherData.description } />
-        </div>
-    )
+    if (weatherData) {
+        return (        
+            <div>
+                <CityInput handleCityInput={ handleCityInput } />
+                <div>{ weatherData.main }</div>
+                <div> Current Temperature: { weatherData.temp }</div>
+                <img src={ weatherData.iconUrl } alt={ weatherData.description } />
+            </div>
+        )
+    } else {
+        return (
+            <div>
+                <CityInput handleCityInput={ handleCityInput } />
+                <div>City not found</div>
+            </div>
+        )
+    }
 }
 
 export default Weather
