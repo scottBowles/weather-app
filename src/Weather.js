@@ -8,8 +8,12 @@ function  Weather() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&APPID=eef25c6c675856bee810c6ca5958c8ee`)
-                const data = await res.json()
+                let res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&APPID=eef25c6c675856bee810c6ca5958c8ee`)
+                let data = await res.json()
+                if (data.cod === "404") {
+                    res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city},us&units=imperial&APPID=eef25c6c675856bee810c6ca5958c8ee`)
+                    data = await res.json()
+                }
                 return data
             } catch {
                 throw new Error("Error fetching data")
@@ -60,12 +64,17 @@ function  Weather() {
     }
     
     if (weatherData) {
+        const { name, country, main, description, iconUrl,temp, feels_like, humidity } = weatherData
+
         return (        
             <div>
                 <CityInput handleCityInput={ handleCityInput } />
-                <div>{ weatherData.main }</div>
-                <div> Current Temperature: { weatherData.temp }</div>
-                <img src={ weatherData.iconUrl } alt={ weatherData.description } />
+                <h3>{ name }, { country }</h3>
+                <div>{ main }</div>
+                <img src={ iconUrl } alt={ description } />
+                <div> Current Temperature: { temp }</div>
+                <div>Feels Like { feels_like }</div>
+                <div>Humidity: {humidity}</div>
             </div>
         )
     } else {
