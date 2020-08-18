@@ -1,6 +1,12 @@
 import React from 'react'
 
 function WeatherDisplay(props) {
+    if (props.weatherData === null) {
+        return <div style={{ marginTop: "20px" }}>City not found</div>
+    }
+    if (!props.weatherData) {
+        return <div style={{ marginTop: "20px" }}>Retreiving data...</div>
+    }
     const { name, country, description, iconUrl, temp, feels_like, humidity } = props.weatherData
     return (
         <>

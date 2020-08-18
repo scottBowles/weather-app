@@ -5,7 +5,7 @@ import WeatherDisplay from './WeatherDisplay'
 
 function  Weather() {
     const [ city, setCity ] = useState("Pittsburgh")
-    const [ weatherData, setWeatherData ] = useState({ name: "", country: "", description: "", iconUrl: "", temp: "", feels_like: "", humidity: ""})
+    const [ weatherData, setWeatherData ] = useState()
     const [ unit, setUnit ] = useState("fahrenheit")
 
     useEffect(() => {
@@ -14,6 +14,7 @@ function  Weather() {
                 const units = unit === "fahrenheit" ? "imperial" : "metric"
                 let res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${units}&APPID=eef25c6c675856bee810c6ca5958c8ee`)
                 let data = await res.json()
+                
                 if (data.cod === "404") {
                     res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city},us&units=${units}&APPID=eef25c6c675856bee810c6ca5958c8ee`)
                     data = await res.json()
@@ -30,7 +31,7 @@ function  Weather() {
         }
 
         function parseData(data) {
-            if (data.cod === "404") {
+            if (data.cod === "404" || data.cod === 429) {
                 return null
             }
 
@@ -61,6 +62,7 @@ function  Weather() {
             const data = await fetchData()
             const parsedData = await parseData(data)
             setWeatherData(parsedData)
+            
         }
 
         if (city) fetchWeatherData()
@@ -75,23 +77,13 @@ function  Weather() {
         setUnit(newUnits)
     }
     
-    if (weatherData) {
-        return (        
-            <div>
-                <CityInput handleCityInput={ handleCityInput } />
-                <UnitSwitch handleUnitChange={ handleUnitChange } unit={ unit } />
-                <WeatherDisplay weatherData={ weatherData } />
-            </div>
-        )
-    } else {
-        return (
-            <div>
-                <CityInput handleCityInput={ handleCityInput } />
-                <UnitSwitch handleUnitChange={ handleUnitChange } unit={ unit } />
-                <div>City not found</div>
-            </div>
-        )
-    }
+    return (        
+        <div>
+            <CityInput handleCityInput={ handleCityInput } />
+            <UnitSwitch handleUnitChange={ handleUnitChange } unit={ unit } />
+            <WeatherDisplay weatherData={ weatherData } />
+        </div>
+    )
 }
 
 export default Weather
